@@ -46,6 +46,7 @@ build ()
   add_file "${TMPDIR}/authorized_keys" "/.ssh/authorized_keys"
   add_full_dir "/etc/tinyssh"
   add_dir "/etc/xinet.d"
+  add_dir "/var/log"
   add_dir "/var/run"
   add_file "/etc/xinetd.conf"
 

@@ -3,7 +3,7 @@
 run_hook ()
 {
   echo "Starting tinyssh"
-  /usr/bin/xinetd -pidfile /var/run/xinetd.pid
+  /usr/bin/xinetd -filelog /var/log/xinetd.log -pidfile /var/run/xinetd.pid
 }
 
 run_cleanuphook ()
