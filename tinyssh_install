@@ -48,6 +48,7 @@ build ()
   add_dir "/etc/xinetd.d"
   add_dir "/var/log"
   add_dir "/var/run"
+  add_file "/etc/protocols"
   add_file "/etc/xinetd.conf"
 
   cat <<SCRIPTEOF > ${TMPDIR}/tinyssh
