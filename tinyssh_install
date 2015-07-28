@@ -45,7 +45,7 @@ build ()
   add_dir "/.ssh"
   add_file "${TMPDIR}/authorized_keys" "/.ssh/authorized_keys"
   add_full_dir "/etc/tinyssh"
-  add_dir "/etc/xinet.d"
+  add_dir "/etc/xinetd.d"
   add_dir "/var/log"
   add_dir "/var/run"
   add_file "/etc/xinetd.conf"
@@ -64,7 +64,7 @@ service unlisted
 }
 SCRIPTEOF
 
-  add_file "${TMPDIR}/tinyssh" "/etc/xinet.d/tinyssh"
+  add_file "${TMPDIR}/tinyssh" "/etc/xinetd.d/tinyssh"
   add_file "/lib/libnss_files.so.2"
 
   # cleanup
