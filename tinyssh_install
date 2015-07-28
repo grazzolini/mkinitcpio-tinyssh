@@ -1,0 +1,86 @@
+#!/bin/bash
+
+display_fingerprints() {
+  if [ -d /etc/tinyssh/sshkeydir ]; then
+      tinysshd-printkey /etc/tinyssh/sshkeydir
+  fi
+}
+
+generate_keys() {
+  if [ ! -d /etc/tinyssh/sshkeydir ]; then
+      tinysshd-makekey /etc/tinyssh/sshkeydir
+  fi
+}
+
+build ()
+{
+  #
+  # Begin real processing
+  #
+
+  # Are we even needed?
+  if [ ! -r "/etc/tinyssh/root_key" -o ! -s "/etc/tinyssh/root_key" ]; then
+    echo "There is no root key in /etc/tinyssh/root_key existent; exit"
+    return 0
+  fi
+
+  # if TMPDIR is set leave it alone otherwise set
+  [ -z $TMPDIR ] && TMPDIR='/tmp/mkinitcpio-tinyssh'
+
+  # check if TMPDIR exsists if not make it
+  [ -d $TMPDIR ] || mkdir -p $TMPDIR
+
+  umask 0022
+
+  generate_keys
+  display_fingerprints
+
+  add_checked_modules "/drivers/net/"
+  add_binary "rm"
+  add_binary "tinysshd"
+  add_binary "xinetd"
+
+  cat /etc/tinyssh/root_key > "${TMPDIR}"/authorized_keys
+
+  add_dir "/.ssh"
+  add_file "${TMPDIR}/authorized_keys" "/.ssh/authorized_keys"
+  add_full_dir "/etc/tinyssh"
+  add_dir "/etc/xinet.d"
+  add_dir "/var/run"
+  add_file "/etc/xinetd.conf"
+
+  cat <<SCRIPTEOF > ${TMPDIR}/tinyssh
+service unlisted
+{
+        type                    = UNLISTED
+        socket_type             = stream
+        wait                    = no
+        user                    = root
+        server                  = /usr/bin/tinysshd
+        server_args             = -l -v /etc/tinyssh/sshkeydir
+        port                    = 2222
+        disable                 = no
+}
+SCRIPTEOF
+
+  add_file "${TMPDIR}/tinyssh" "/etc/xinet.d/tinyssh"
+  add_file "/lib/libnss_files.so.2"
+
+  # cleanup
+  rm "${TMPDIR}/authorized_keys"
+  rm "${TMPDIR}/tinyssh"
+
+  add_runscript
+  
+}
+
+help ()
+{
+    cat<<HELPEOF
+This hook is meant to be used in conjunction with mkinitcpio-netconf and/or
+mkinitcpio-ppp. It DOES NOT provide any default shell. It will only install
+and start tinyssh on early userspace. In the package mkinitcpio-shells you
+will find hooks and shells for remote unlocking a luks root partition,
+among others.
+HELPEOF
+}

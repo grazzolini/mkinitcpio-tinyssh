@@ -1,0 +1,14 @@
+#!/usr/bin/ash
+
+run_hook ()
+{
+  echo "Starting tinyssh"
+  /usr/bin/xinetd -pidfile /var/run/xinetd.pid
+}
+
+run_cleanuphook ()
+{
+    if [ -f /var/run/xinetd.pid ]; then
+        kill `cat /var/run/xinetd.pid`
+    fi
+}
