@@ -58,7 +58,7 @@ service unlisted
         user                    = root
         server                  = /usr/bin/tinysshd
         server_args             = -l -v /etc/tinyssh/sshkeydir
-        port                    = 2222
+        port                    = 22
         disable                 = no
 }
 SCRIPTEOF
