@@ -60,7 +60,7 @@ service unlisted
         wait                    = no
         user                    = root
         server                  = /usr/bin/tinysshd
-        server_args             = -l -v /etc/tinyssh/sshkeydir
+        server_args             = -v /etc/tinyssh/sshkeydir
         port                    = 22
         disable                 = no
 }
