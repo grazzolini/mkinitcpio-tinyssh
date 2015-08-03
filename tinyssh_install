@@ -38,6 +38,7 @@ build ()
 
   add_checked_modules "/drivers/net/"
   add_binary "rm"
+  add_binary "killall"
   add_binary "tinysshd"
   add_binary "tcpserver"
 
