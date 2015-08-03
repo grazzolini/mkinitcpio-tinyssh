@@ -1,3 +1,4 @@
+
 #!/bin/bash
 
 display_fingerprints() {
@@ -38,40 +39,17 @@ build ()
   add_checked_modules "/drivers/net/"
   add_binary "rm"
   add_binary "tinysshd"
-  add_binary "xinetd"
+  add_binary "tcpserver"
 
   cat /etc/tinyssh/root_key > "${TMPDIR}"/authorized_keys
 
   add_dir "/.ssh"
   add_file "${TMPDIR}/authorized_keys" "/.ssh/authorized_keys"
   add_full_dir "/etc/tinyssh"
-  add_dir "/etc/xinetd.d"
-  add_dir "/var/log"
-  add_dir "/var/run"
-  add_file "/etc/protocols"
-  add_file "/etc/xinetd.conf"
-
-  cat <<SCRIPTEOF > ${TMPDIR}/tinyssh
-service unlisted
-{
-        type                    = UNLISTED
-        socket_type             = stream
-        protocol                = tcp
-        wait                    = no
-        user                    = root
-        server                  = /usr/bin/tinysshd
-        server_args             = -v -o -s -p /etc/tinyssh/sshkeydir
-        port                    = 22
-        disable                 = no
-}
-SCRIPTEOF
-
-  add_file "${TMPDIR}/tinyssh" "/etc/xinetd.d/tinyssh"
   add_file "/lib/libnss_files.so.2"
 
   # cleanup
   rm "${TMPDIR}/authorized_keys"
-  rm "${TMPDIR}/tinyssh"
 
   add_runscript
   

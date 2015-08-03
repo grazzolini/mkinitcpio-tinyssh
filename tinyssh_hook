@@ -6,14 +6,12 @@ run_hook ()
   mount -t devpts devpts /dev/pts
 
   echo "Starting tinyssh"
-  /usr/bin/xinetd -filelog /var/log/xinetd.log -pidfile /var/run/xinetd.pid
+  /usr/bin/tcpserver -HRDl0 0.0.0.0 22 /usr/sbin/tinysshd -v /etc/tinyssh/sshkeydir
 }
 
 run_cleanuphook ()
 {
     umount /dev/pts
     rm -R /dev/pts
-    if [ -f /var/run/xinetd.pid ]; then
-        kill `cat /var/run/xinetd.pid`
-    fi
+    killall tcpserver
 }
