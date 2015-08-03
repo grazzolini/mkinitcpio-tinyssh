@@ -6,7 +6,7 @@ run_hook ()
   mount -t devpts devpts /dev/pts
 
   echo "Starting tinyssh"
-  /usr/bin/tcpserver -HRDl0 0.0.0.0 22 /usr/sbin/tinysshd -v /etc/tinyssh/sshkeydir
+  /usr/bin/tcpserver -HRDl0 0.0.0.0 22 /usr/sbin/tinysshd -v /etc/tinyssh/sshkeydir &
 }
 
 run_cleanuphook ()
