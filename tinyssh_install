@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 display_fingerprints() {
@@ -46,7 +45,10 @@ build ()
 
   add_dir "/.ssh"
   add_file "${TMPDIR}/authorized_keys" "/.ssh/authorized_keys"
+  #necessary for tinyssh private keys
+  shopt -s dotglob
   add_full_dir "/etc/tinyssh"
+  shopt -u dotglob
   add_file "/lib/libnss_files.so.2"
 
   # cleanup
