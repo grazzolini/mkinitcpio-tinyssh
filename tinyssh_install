@@ -63,7 +63,7 @@ help ()
     cat<<HELPEOF
 This hook is meant to be used in conjunction with mkinitcpio-netconf and/or
 mkinitcpio-ppp. It DOES NOT provide any default shell. It will only install
-and start tinyssh on early userspace. In the package mkinitcpio-shells you
+and start tinyssh on early userspace. In the package mkinitcpio-utils you
 will find hooks and shells for remote unlocking a luks root partition,
 among others.
 HELPEOF
