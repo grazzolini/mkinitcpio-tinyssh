@@ -12,6 +12,15 @@ generate_keys() {
   fi
 }
 
+create_systemd_customdep () {
+    add_dir "/etc/systemd/system/tinyssh@22.socket.d"
+    cat << CUSTOMEOF > "${BUILDROOT}/etc/systemd/system/tinyssh@22.socket.d/cryptsetup-dep.conf"
+[Unit]
+Before=
+Before=cryptsetup.target
+CUSTOMEOF
+}
+
 build ()
 {
   #
@@ -35,27 +44,34 @@ build ()
   generate_keys
   display_fingerprints
 
-  add_checked_modules "/drivers/net/"
-  add_binary "rm"
-  add_binary "killall"
-  add_binary "tinysshd"
-  add_binary "tcpserver"
+  #systemd enabled
+  declare -F add_systemd_unit > /dev/null 2>&1
+  if [ $? -eq 0 ]; then
+      add_systemd_unit "tinysshgenkeys.service"
+      add_systemd_unit "tinyssh@.socket"
+      add_systemd_unit "tinyssh@.service"
+      systemctl --root "$BUILDROOT" enable tinyssh@22.socket
+      create_systemd_customdep
+  #base enabled
+  else
+      add_checked_modules "/drivers/net/"
+      add_binary "rm"
+      add_binary "killall"
+      add_binary "tinysshd"
+      add_binary "tcpserver"
+      add_file "/lib/libnss_files.so.2"
+      add_runscript
+  fi
 
-  cat /etc/tinyssh/root_key > "${TMPDIR}"/authorized_keys
+  #both
+  add_dir "/root/.ssh"
+  cat /etc/tinyssh/root_key > "${BUILDROOT}"/root/.ssh/authorized_keys
 
-  add_dir "/.ssh"
-  add_file "${TMPDIR}/authorized_keys" "/.ssh/authorized_keys"
   #necessary for tinyssh private keys
   shopt -s dotglob
   add_full_dir "/etc/tinyssh"
   shopt -u dotglob
-  add_file "/lib/libnss_files.so.2"
 
-  # cleanup
-  rm "${TMPDIR}/authorized_keys"
-
-  add_runscript
-  
 }
 
 help ()
