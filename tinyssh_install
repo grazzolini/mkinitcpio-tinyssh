@@ -24,7 +24,7 @@ copy_openssh_keys() {
 
   local return_code=1
 
-  if [ ! -d $destdir ]; then
+  if [ ! -d $destdir -a -x /usr/bin/tinyssh-convert ]; then
       mkdir $destdir
   fi
   
