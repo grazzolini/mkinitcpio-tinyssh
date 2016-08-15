@@ -29,7 +29,7 @@ copy_openssh_keys() {
   fi
   
   if [ -s "$osshed25519" -a ! -s $destdir/.ed25519.sk -a ! -s $destdir/ed25519.pk -a -x /usr/bin/tinyssh-convert ]; then
-      tinyssh-convert $osshed25519 $destdir
+      tinyssh-convert -f $osshed25519 -d $destdir
       if [ $? -eq 0 ]; then
           return_code=0
       fi
