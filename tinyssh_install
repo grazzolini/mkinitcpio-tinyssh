@@ -10,6 +10,7 @@ generate_keys() {
   if [ ! -d /etc/tinyssh/sshkeydir ]; then
       tinysshd-makekey /etc/tinyssh/sshkeydir
       if [ $? -eq 0 ]; then
+          echo "Generated tinyssh keys..."
           return 0
       fi
   fi
@@ -32,6 +33,10 @@ copy_openssh_keys() {
       if [ $? -eq 0 ]; then
           return_code=0
       fi
+  fi
+
+  if [ $return_code -eq 0 ]; then
+      echo "Converted keys from OpenSSH..."
   fi
 
   return $return_code
