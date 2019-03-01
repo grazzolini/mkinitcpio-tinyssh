@@ -88,7 +88,6 @@ build ()
       add_binary "rm"
       add_binary "killall"
       add_binary "tinysshd"
-      add_binary "tcpserver"
       add_file "/lib/libnss_files.so.2"
       add_runscript
   fi
