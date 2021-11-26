@@ -1,14 +1,27 @@
 #!/bin/bash
 
+KEY_DIR=/etc/tinyssh/sshkeydir
+
+error_no_keys() {
+  echo "ERROR: There are no keys in ${KEY_DIR}! Something must have gone wrong. Please debug $(realpath $0) to fix it."
+}
+
+verify_keys() {
+  if [ ! -d "$KEY_DIR" -o -n "$(find "$KEY_DIR" -maxdepth 0 -empty)" ]; then
+      return 1
+  fi
+  return 0
+}
+
 display_fingerprints() {
-  if [ -d /etc/tinyssh/sshkeydir ]; then
-      tinysshd-printkey /etc/tinyssh/sshkeydir
+  if [ -d "$KEY_DIR" ]; then
+      tinysshd-printkey "$KEY_DIR"
   fi
 }
 
 generate_keys() {
-  if [ ! -d /etc/tinyssh/sshkeydir ]; then
-      tinysshd-makekey /etc/tinyssh/sshkeydir
+  if [ ! -d "$KEY_DIR" ]; then
+      tinysshd-makekey "$KEY_DIR"
       if [ $? -eq 0 ]; then
           echo "Generated tinyssh keys..."
           return 0
@@ -20,12 +33,10 @@ generate_keys() {
 copy_openssh_keys() {
   local osshed25519="/etc/ssh/ssh_host_ed25519_key"
 
-  local destdir="/etc/tinyssh/sshkeydir"
-
   local return_code=1
 
-  if [ -s "$osshed25519" -a ! -d "$destdir" -a -x /usr/bin/tinyssh-convert ]; then
-      tinyssh-convert "$destdir" < "$osshed25519"
+  if [ -s "$osshed25519" -a ! -d "$KEY_DIR" -a -x /usr/bin/tinyssh-convert ]; then
+      tinyssh-convert "$KEY_DIR" < "$osshed25519"
       if [ $? -eq 0 ]; then
           return_code=0
       fi
@@ -68,6 +79,12 @@ build ()
   umask 0022
 
   copy_openssh_keys || generate_keys
+
+  if ! verify_keys ; then
+    error_no_keys
+    return 1
+  fi
+
   display_fingerprints
 
   #systemd enabled
