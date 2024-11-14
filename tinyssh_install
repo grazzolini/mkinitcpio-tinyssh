@@ -25,11 +25,7 @@ copy_openssh_keys() {
   local return_code=1
 
   if [ ! -d $destdir -a -x /usr/bin/tinyssh-convert ]; then
-      mkdir $destdir
-  fi
-  
-  if [ -s "$osshed25519" -a ! -s $destdir/.ed25519.sk -a ! -s $destdir/ed25519.pk -a -x /usr/bin/tinyssh-convert ]; then
-      tinyssh-convert -f $osshed25519 -d $destdir
+      tinyssh-convert $destdir < $osshed25519
       if [ $? -eq 0 ]; then
           return_code=0
       fi
